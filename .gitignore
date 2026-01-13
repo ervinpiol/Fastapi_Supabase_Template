@@ -12,7 +12,16 @@ yarn-error.log*
 # OS files
 .DS_Store
 
-# 🔑 Environment Variables
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+venv/
 .env
 .env.*
 !.env.example # Optional: Keep an example file committed (if one exists)
+
+# IDE files
+.vscode/
+.idea/

@@ -92,5 +92,4 @@ async def warm_up_connections(num_connections: int = 10) -> None:
 def init_db() -> None:
     """Initialize database (create tables if needed)"""
     # In production, use Alembic migrations instead
-    # Base.metadata.create_all(bind=sync_engine)
-    pass
+    Base.metadata.create_all(bind=sync_engine)
