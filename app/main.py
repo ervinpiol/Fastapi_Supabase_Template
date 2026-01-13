@@ -7,6 +7,7 @@ from app.services.database import warm_up_connections, init_db
 
 
 from app.routes.users import router as users_router
+from app.routes.todo import router as todo_router
 
 
 @asynccontextmanager
@@ -35,8 +36,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include API router
+# Include API routers with API prefix
 app.include_router(users_router)
+app.include_router(todo_router)
 
 
 @app.get("/")
