@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, ConfigDict
 import uuid
-from typing import List, Optional
+from typing import List, Optional, Literal
 
 # --- User Schemas ---
 class UserBase(BaseModel):
@@ -52,6 +52,15 @@ class NewPassword(BaseModel):
  
 class Message(BaseModel):
     message: str
+ 
+class VerifyEmailInput(BaseModel):
+    email: EmailStr
+    token: str
+    type: Literal["email", "signup", "magiclink", "recovery", "email_change"] = "email"
+ 
+class ResendVerificationInput(BaseModel):
+    email: EmailStr
+    type: Literal["signup", "email_change"] = "signup"
  
 class AuthResponse(BaseModel):
     access_token: str

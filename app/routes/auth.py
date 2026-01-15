@@ -9,9 +9,11 @@ from app.schemas.users import (
     Message,
     NewPassword,
     PasswordResetRequest,
+    ResendVerificationInput,
     UserCreate,
     UserPublic,
     UserRegister,
+    VerifyEmailInput,
 )
 
 router = APIRouter(
@@ -119,6 +121,64 @@ def login(
         access_token=auth_resp.session.access_token,
         user=UserPublic.model_validate(user),
     )
+
+
+@router.post("/verify-email", response_model=AuthResponse)
+def verify_email(
+    payload: VerifyEmailInput,
+    db: DBSession,
+    supabase: SupabaseClient,
+):
+    try:
+        auth_resp = supabase.auth.verify_otp(
+            {"email": payload.email, "token": payload.token, "type": payload.type}
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Email verification failed: {exc}",
+        )
+    if not auth_resp or not auth_resp.session:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unable to retrieve access token after verification",
+        )
+
+    user = get_user_by_email(session=db, email=payload.email)
+    if not user:
+        user = create_user(
+            session=db,
+            user_create=UserCreate(
+                email=payload.email,
+                password=payload.token,  # placeholder; Supabase password already set
+                full_name=getattr(auth_resp.user, "user_metadata", {}).get(
+                    "full_name", None
+                )
+                if auth_resp and auth_resp.user and auth_resp.user.user_metadata
+                else None,
+            ),
+            user_id=getattr(auth_resp.user, "id", None) if auth_resp else None,
+        )
+
+    return AuthResponse(
+        access_token=auth_resp.session.access_token,
+        user=UserPublic.model_validate(user),
+    )
+
+
+@router.post("/resend-verification", response_model=Message)
+def resend_verification(
+    payload: ResendVerificationInput,
+    supabase: SupabaseClient,
+):
+    try:
+        supabase.auth.resend({"email": payload.email, "type": payload.type})
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Resend verification failed: {exc}",
+        )
+    return Message(message="Verification email sent if the account exists.")
 
 
 @router.post("/reset-password", response_model=Message)
