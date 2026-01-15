@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.services.database import warm_up_connections, init_db
+from app.db.session import warm_up_connections, init_db
 
 
 from app.routes.users import router as users_router

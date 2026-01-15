@@ -1,5 +1,6 @@
 import uuid
 from typing import Any
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -14,19 +15,18 @@ def create_user(
     user_create: UserCreate,
     user_id: uuid.UUID | None = None,
 ) -> User:
-    # 1. Convert Pydantic model to dict, exclude the plain password
+    """Create a user with hashed password."""
+
     user_data = user_create.model_dump(exclude={"password"})
-    
-    # 2. Use provided Supabase user id if available
+
     if user_id is not None:
         user_data["id"] = user_id
-    
-    # 3. Create SQLAlchemy instance and add hashed password
+
     db_obj = User(
         **user_data,
-        hashed_password=get_password_hash(user_create.password)
+        hashed_password=get_password_hash(user_create.password),
     )
-    
+
     session.add(db_obj)
     session.commit()
     session.refresh(db_obj)
@@ -34,15 +34,14 @@ def create_user(
 
 
 def update_user(*, session: Session, db_user: User, user_in: UserUpdate) -> Any:
-    # 1. Get the data as a dict, ignoring fields that weren't sent
+    """Update user fields, hashing password when provided."""
+
     user_data = user_in.model_dump(exclude_unset=True)
-    
-    # 2. Handle password hashing separately if it exists in update
+
     if "password" in user_data:
         password = user_data.pop("password")
         db_user.hashed_password = get_password_hash(password)
 
-    # 3. Update the rest of the attributes dynamically
     for field, value in user_data.items():
         setattr(db_user, field, value)
 
@@ -53,8 +52,6 @@ def update_user(*, session: Session, db_user: User, user_in: UserUpdate) -> Any:
 
 
 def get_user_by_email(*, session: Session, email: str) -> User | None:
-    # SQLAlchemy uses .scalars().first() to get the actual object 
-    # instead of a row tuple
     statement = select(User).where(User.email == email)
     return session.scalars(statement).first()
 

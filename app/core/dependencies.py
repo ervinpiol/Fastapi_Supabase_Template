@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 from supabase import Client
 
-from app.services.database import get_db, get_async_db, get_supabase_client
+from app.db.session import get_db, get_async_db
+from app.db.supabase import get_supabase_client
 from app.models.users import User  # Your User model
 from .config import settings
 

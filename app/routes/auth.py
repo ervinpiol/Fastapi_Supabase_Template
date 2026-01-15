@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 
 from app.core.config import settings
-from app.core.crud import create_user, get_user_by_email
+from app.services.user_service import create_user, get_user_by_email
 from app.core.dependencies import DBSession, SupabaseClient
 from app.schemas.users import (
     AuthResponse,
