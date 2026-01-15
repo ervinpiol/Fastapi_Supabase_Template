@@ -1,10 +1,9 @@
 import uuid
-from typing import List, Optional
-from sqlalchemy import String, ForeignKey, Boolean
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from typing import Optional
+from sqlalchemy import String, Boolean
+from sqlalchemy.orm import Mapped, mapped_column
 
-class Base(DeclarativeBase):
-    pass
+from app.db.base import Base
 
 class User(Base):
     __tablename__ = "users"
