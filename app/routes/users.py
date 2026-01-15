@@ -1,16 +1,20 @@
 from fastapi import APIRouter
+from app.core.config import settings
 from app.core.dependencies import CurrentUser, CurrentUserAsync, DBSession
 
-router = APIRouter(tags=["user"])
+router = APIRouter(
+    prefix=f"{settings.API_V1_STR}/users",
+    tags=["user"],
+)
 
 
-@router.get("/users/me")
+@router.get("/me")
 async def read_users_me(current_user: CurrentUser):
     """Synchronous route with auth"""
     return current_user
 
 
-@router.get("/users/me/async")
+@router.get("/me/async")
 async def read_users_me_async(current_user: CurrentUserAsync):
     """Fully async route with auth"""
     return current_user

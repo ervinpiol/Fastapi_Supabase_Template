@@ -2,18 +2,14 @@ import logging
 from typing import AsyncGenerator, Generator
 from sqlalchemy import create_engine, text
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, AsyncEngine
-from sqlalchemy.orm import Session, sessionmaker, DeclarativeBase
+from sqlalchemy.orm import Session, sessionmaker
 from supabase import Client, create_client
+
+from app.models.users import Base
 
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
-
-
-# ===== Database Base =====
-class Base(DeclarativeBase):
-    """Base class for all database models"""
-    pass
 
 
 # ===== Supabase Client =====
