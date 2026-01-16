@@ -1,18 +1,12 @@
-import uuid
-from typing import Optional
-from sqlalchemy import String, Boolean
-from sqlalchemy.orm import Mapped, mapped_column
-
+from sqlalchemy import Integer, Column, String, Boolean
 from app.db.base import Base
 
 class User(Base):
     __tablename__ = "users"
 
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
-    full_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    hashed_password: Mapped[str] = mapped_column(String, nullable=False)
-
-    # Relationship
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    is_active = Column(Boolean, default=True)
+    is_superuser = Column(Boolean, default=False)
+    full_name = Column(String(255), nullable=True)
+    hashed_password = Column(String, nullable=False)
