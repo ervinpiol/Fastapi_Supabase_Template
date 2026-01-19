@@ -9,6 +9,7 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy.dialects import postgresql
 
 
 # revision identifiers, used by Alembic.
@@ -21,7 +22,7 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade():
     op.create_table(
         'users',
-        sa.Column('id', sa.Integer(), primary_key=True, autoincrement=True),
+        sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True, server_default=sa.text('gen_random_uuid()')),
         sa.Column('email', sa.String(255), nullable=False, unique=True, index=True),
         sa.Column('is_active', sa.Boolean(), nullable=False, server_default='true'),
         sa.Column('is_superuser', sa.Boolean(), nullable=False, server_default='false'),
